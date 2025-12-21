@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Signup</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <h2>Create College Account</h2>
+
+    <input id="signupName" placeholder="Full Name">
+    <input id="signupEmail" type="email" placeholder="College Email">
+    <input id="signupPassword" type="password" placeholder="Password" minlength="6" autocomplete="off">
+
+    <select id="signupBranch">
+        <option value="">Select Branch</option>
+        <option value="CSE">CSE</option>
+        <option value="ECE">ECE</option>
+        <option value="ME">ME</option>
+        <option value="CE">CE</option>
+        <option value="BME">CE</option>
+        <option value="CSM">CE</option>
+        <option value="CSD">CE</option>
+        <!-- Add more branches as needed -->
+    </select>
+
+    <select id="signupYear">
+        <option value="">Select Year</option>
+        <option value="1">1st Year</option>
+        <option value="2">2nd Year</option>
+        <option value="3">3rd Year</option>
+        <option value="4">4th Year</option>
+    </select>
+
+    <input id="signupSection" placeholder="Section">
+
+    <button onclick="signupUser()">Create Account</button>
+
+    <br><br>
+    <a href="login.html">Already have account?</a>
+</div>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+
+<!-- Your JS -->
+<script src="app.js"></script>
+</body>
+</html>
