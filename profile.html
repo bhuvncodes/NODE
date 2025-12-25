@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Student Idea Collaboration</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Sidebar Toggle Button (Fixed Position) -->
+    <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">☰</button>
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="brand">
+                <img src="node.png" alt="NodeLogo" class="node-logo">
+            </div>
+            <h2>NODE</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="nav-item">
+                <span>📊</span> Dashboard
+            </a>
+            <a href="my-ideas.html" class="nav-item">
+                <span>💡</span> My Ideas
+            </a>
+            <a href="project-workspace.html" class="nav-item">
+                <span>🚀</span> Projects
+            </a>
+            <a href="profile.html" class="nav-item active">
+                <span>👤</span> Profile
+            </a>
+            <a href="index.html" class="nav-item">
+                <span>🚪</span> Logout
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-header">
+            <h1>My Profile</h1>
+            <p class="subtitle">Manage your profile information</p>
+        </div>
+
+        <!-- Profile Card -->
+        <div class="card profile-card">
+            <h2>Profile Details</h2>
+            
+            <form id="profileForm" class="profile-form">
+                <div class="form-group">
+                    <label for="profileName">Full Name</label>
+                    <input type="text" id="profileName" name="name" placeholder="Enter your full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="profileEmail">College Email</label>
+                    <input type="email" id="profileEmail" name="email" placeholder="your.email@bvrit.ac.in" required>
+                    <small class="form-hint">College email address cannot be changed</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="profileBranch">Branch</label>
+                    <select id="profileBranch" name="branch" required>
+                        <option value="">Select Branch</option>
+                        <option value="CSE">CSE</option>
+                        <option value="ECE">ECE</option>
+                        <option value="MECH">MECH</option>
+                        <option value="CIVIL">CIVIL</option>
+                        <option value="BME">BME</option>
+                        <option value="CSM">CSM</option>
+                        <option value="CSD">CSD</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="profileYear">Year</label>
+                    <select id="profileYear" name="year" required>
+                        <option value="">Select Year</option>
+                        <option value="1">1st Year</option>
+                        <option value="2">2nd Year</option>
+                        <option value="3">3rd Year</option>
+                        <option value="4">4th Year</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="profileSection">Section</label>
+                    <input type="text" id="profileSection" name="section" placeholder="Enter section (e.g., A, B)" required>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                    <button type="button" class="btn-secondary" onclick="resetForm()">Reset</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Account Settings Card -->
+        <div class="card account-settings-card">
+            <h2>Account Settings</h2>
+            
+            <div class="settings-section">
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h4>Change Password</h4>
+                        <p>Update your account password</p>
+                    </div>
+                    <button class="btn-secondary" onclick="openModal('changePasswordModal')">Change Password</button>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h4>Account Status</h4>
+                        <p>Your account is active</p>
+                    </div>
+                    <span class="status-badge status-completed">Active</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Change Password Modal -->
+    <div id="changePasswordModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('changePasswordModal')">&times;</span>
+            <h2>Change Password</h2>
+            <form id="changePasswordForm">
+                <div class="form-group">
+                    <label for="currentPassword">Current Password</label>
+                    <input type="password" id="currentPassword" placeholder="Enter current password" required>
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">New Password</label>
+                    <input type="password" id="newPassword" placeholder="Enter new password" minlength="6" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm New Password</label>
+                    <input type="password" id="confirmPassword" placeholder="Confirm new password" minlength="6" required>
+                </div>
+                <button type="submit" class="btn-primary">Update Password</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+    <script src="app.js"></script>
+    <script src="ui.js"></script>
+    <script>
+        let originalProfileData = null;
+
+        // Load profile data from Firestore
+        function loadProfileData() {
+            const user = firebase.auth().currentUser;
+            if (!user) {
+                alert("Please log in to view your profile.");
+                window.location = "login.html";
+                return;
+            }
+
+            db.collection('users').doc(user.uid).get()
+                .then(doc => {
+                    if (doc.exists) {
+                        const data = doc.data();
+                        originalProfileData = data;
+
+                        // Populate form fields
+                        document.getElementById('profileName').value = data.name || '';
+                        document.getElementById('profileEmail').value = data.email || '';
+                        document.getElementById('profileBranch').value = data.branch || '';
+                        document.getElementById('profileYear').value = data.year || '';
+                        document.getElementById('profileSection').value = data.section || '';
+
+                        // Disable email field (can't change)
+                        document.getElementById('profileEmail').disabled = true;
+                    } else {
+                        alert("Profile not found. Please complete your profile.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error loading profile:", error);
+                    alert("Failed to load profile: " + error.message);
+                });
+        }
+
+        // Profile form handling
+        document.getElementById('profileForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const user = firebase.auth().currentUser;
+            if (!user) {
+                alert("Please log in to update your profile.");
+                return;
+            }
+
+            const updatedData = {
+                name: document.getElementById('profileName').value.trim(),
+                branch: document.getElementById('profileBranch').value,
+                year: document.getElementById('profileYear').value,
+                section: document.getElementById('profileSection').value.trim(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            // Validation
+            if (!updatedData.name || !updatedData.branch || !updatedData.year || !updatedData.section) {
+                alert("Please fill all fields.");
+                return;
+            }
+
+            db.collection('users').doc(user.uid).update(updatedData)
+                .then(() => {
+                    alert("Profile updated successfully!");
+                    originalProfileData = { ...originalProfileData, ...updatedData };
+                })
+                .catch(error => {
+                    console.error("Error updating profile:", error);
+                    alert("Failed to update profile: " + error.message);
+                });
+        });
+
+        // Change password form handling
+        document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const user = firebase.auth().currentUser;
+            if (!user) {
+                alert("Please log in to change your password.");
+                return;
+            }
+
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (newPassword !== confirmPassword) {
+                alert('New passwords do not match!');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                alert('Password must be at least 6 characters long.');
+                return;
+            }
+
+            user.updatePassword(newPassword)
+                .then(() => {
+                    alert('Password updated successfully!');
+                    closeModal('changePasswordModal');
+                    document.getElementById('changePasswordForm').reset();
+                })
+                .catch(error => {
+                    console.error("Error updating password:", error);
+                    if (error.code === 'auth/requires-recent-login') {
+                        alert('For security, please log out and log back in before changing your password.');
+                    } else {
+                        alert('Failed to update password: ' + error.message);
+                    }
+                });
+        });
+
+        // Reset form to original values
+        function resetForm() {
+            if (originalProfileData) {
+                document.getElementById('profileName').value = originalProfileData.name || '';
+                document.getElementById('profileBranch').value = originalProfileData.branch || '';
+                document.getElementById('profileYear').value = originalProfileData.year || '';
+                document.getElementById('profileSection').value = originalProfileData.section || '';
+            } else {
+                loadProfileData();
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check auth state
+            firebase.auth().onAuthStateChanged(function(user) {
+                if (user) {
+                    loadProfileData();
+                } else {
+                    window.location = "login.html";
+                }
+            });
+        });
+    </script>
+    <script src="Config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
+
