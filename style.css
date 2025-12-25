@@ -17,7 +17,7 @@
     --bg: #0a0e1a;
     --card: #1a1f2e;
     --surface: #151923;
-    --text: #f0f4f8;
+    --text: ##616263;
     --muted: #b8c5d6;
     --border: #2d3441;
     --accent: #a855f7;
@@ -2921,4 +2921,5 @@ body.auth-page {
     display: flex;
     align-items: center;
     justify-content: center;
+
 }
