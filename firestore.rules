@@ -1,0 +1,63 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isIdeaMember(ideaId) {
+      let idea = get(/databases/$(database)/documents/ideas/$(ideaId)).data;
+      return idea != null && (
+        idea.ownerUid == request.auth.uid ||
+        (idea.members is list && idea.members.hasAny([request.auth.uid]))
+      );
+    }
+    
+    // Users collection - users can read/write their own profile
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Ideas collection - authenticated users can create and read ideas
+    match /ideas/{ideaId} {
+      // Anyone authenticated can read ideas
+      allow read: if request.auth != null;
+      
+      // Anyone authenticated can create ideas
+      allow create: if request.auth != null 
+        && request.resource.data.ownerUid == request.auth.uid
+        && (request.resource.data.keys().hasAll(['title', 'description', 'department', 'totalMembers', 'ownerUid', 'ownerEmail', 'status', 'createdAt'])
+            || request.resource.data.keys().hasAll(['title', 'description', 'departments', 'totalMembers', 'ownerUid', 'ownerEmail', 'status', 'createdAt']));
+      
+      // Update rules:
+      // - Anyone authenticated can update joinRequests field (for joining teams)
+      // - Only the owner can update members or other fields
+      allow update: if request.auth != null && (
+        // Allow users to update joinRequests (simplified - allows any authenticated user)
+        // In production, you might want to add validation that they're only adding themselves
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['joinRequests']))
+        ||
+        // Allow owner to update anything
+        (resource.data.ownerUid == request.auth.uid)
+      );
+      
+      // Only the owner can delete their own idea
+      allow delete: if request.auth != null 
+        && resource.data.ownerUid == request.auth.uid;
+
+      // Chat messages subcollection
+      match /messages/{messageId} {
+        allow read: if request.auth != null && isIdeaMember(ideaId);
+
+        allow create: if request.auth != null
+          && isIdeaMember(ideaId)
+          && request.resource.data.keys().hasOnly(['text', 'senderUid', 'senderEmail', 'createdAt'])
+          && request.resource.data.senderUid == request.auth.uid
+          && request.resource.data.text is string
+          && request.resource.data.text.size() <= 2000
+          && request.resource.data.createdAt is timestamp;
+
+        allow update, delete: if false;
+      }
+    }
+  }
+}
+
