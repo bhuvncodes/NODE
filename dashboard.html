@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Student Idea Collaboration</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Sidebar Toggle Button (Fixed Position) -->
+    <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">☰</button>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="brand">
+                <img src="node.png" alt="NodeLogo" class="node-logo">
+            </div>
+            <h2>NODE</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="nav-item active">
+                <span>📊</span> Dashboard
+            </a>
+            <a href="my-ideas.html" class="nav-item">
+                <span>💡</span> My Ideas
+            </a>
+            <a href="project-workspace.html" class="nav-item">
+                <span>🚀</span> Projects
+            </a>
+            <a href="profile.html" class="nav-item">
+                <span>👤</span> Profile
+            </a>
+            <a href="index.html" class="nav-item">
+                <span>🚪</span> Logout
+            </a>
+        </nav>
+    </aside>
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-header">
+            <h1>Dashboard</h1>
+            <p class="subtitle">Track your ideas and requirement progress</p>
+        </div>
+
+        <!-- Overview Cards -->
+        <div class="cards-grid">
+            <div class="card overview-card">
+                <div class="card-icon" style="background: #e3f2fd;">
+                    <span>💡</span>
+                </div>
+                <div class="card-content">
+                    <h3>My Ideas</h3>
+                    <p class="card-number" id="ideasCount">-</p>
+                    <p class="card-label">Total ideas posted</p>
+                </div>
+            </div>
+
+            <div class="card overview-card">
+                <div class="card-icon" style="background: #fff3e0;">
+                    <span>⏳</span>
+                </div>
+                <div class="card-content">
+                    <h3>Pending Requirements</h3>
+                    <p class="card-number" id="pendingRequirements">-</p>
+                    <p class="card-label">Ideas waiting for team</p>
+                </div>
+            </div>
+
+            <div class="card overview-card">
+                <div class="card-icon" style="background: #e8f5e9;">
+                    <span>✅</span>
+                </div>
+                <div class="card-content">
+                    <h3>Ready to Proceed</h3>
+                    <p class="card-number" id="readyIdeas">-</p>
+                    <p class="card-label">Requirements fulfilled</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Available Projects Section -->
+        <div class="section">
+            <h2>Available Projects for Your Branch</h2>
+            <div class="card" id="availableProjectsCard">
+                <!-- Loading State -->
+                <div class="empty-state" id="loadingProjectsState" style="display: none;">
+                    <div class="empty-icon">⏳</div>
+                    <h3>Loading Projects...</h3>
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-state" id="emptyProjectsState">
+                    <div class="empty-icon">💡</div>
+                    <h3>No Projects Available</h3>
+                    <p>There are no projects matching your branch right now. Check back later or create your own project!</p>
+                    <button class="btn-primary" onclick="window.location.href='my-ideas.html'">Create Your Own Project</button>
+                </div>
+
+                <!-- Projects Grid (will be populated by backend) -->
+                <div class="ideas-grid" id="availableProjectsGrid" style="display: none;">
+                    <!-- Projects will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- My Ideas Progress -->
+        <div class="section">
+            <h2>My Ideas Progress</h2>
+            <div class="card" id="ideasProgressCard">
+                <!-- Empty State -->
+                <div class="empty-state" id="emptyIdeasState">
+                    <div class="empty-icon">💡</div>
+                    <h3>No Ideas Yet</h3>
+                    <p>You haven't posted any ideas yet. Start by creating your first idea!</p>
+                    <button class="btn-primary" onclick="window.location.href='my-ideas.html'">Create Your First Idea</button>
+                </div>
+
+                <!-- Ideas List (will be populated by backend) -->
+                <div class="ideas-progress-list" id="ideasProgressList" style="display: none;">
+                    <!-- Idea progress items will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Requirements Status Check -->
+        <div class="section">
+            <h2>Requirements Status</h2>
+            <div class="card" id="requirementsStatusCard">
+                <!-- Empty State -->
+                <div class="empty-state" id="emptyRequirementsState">
+                    <div class="empty-icon">📋</div>
+                    <h3>No Requirements to Check</h3>
+                    <p>Once you post ideas with team requirements, their status will appear here.</p>
+                </div>
+
+                <!-- Requirements List (will be populated by backend) -->
+                <div class="requirements-status-list" id="requirementsStatusList" style="display: none;">
+                    <!-- Requirement status items will be dynamically added here -->
+                    <!-- Example structure (for reference):
+                    <div class="requirement-status-item">
+                        <div class="req-item-header">
+                            <h4>Idea: Idea Title</h4>
+                            <span class="req-status-badge unmet">Requirements Not Met</span>
+                        </div>
+                        <div class="req-item-details">
+                            <p><strong>Required Roles:</strong> Frontend (2), Backend (1), Designer (1)</p>
+                            <p><strong>Filled:</strong> 2 / 4 positions</p>
+                            <p><strong>Status:</strong> <span class="status-text">Waiting for team members</span></p>
+                        </div>
+                        <div class="req-item-actions">
+                            <button class="btn-secondary" onclick="viewIdeaRequirements()">View Requirements</button>
+                        </div>
+                    </div>
+                    -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="section">
+            <h2>Quick Actions</h2>
+            <div class="card">
+                <div class="quick-actions-grid">
+                    <button class="quick-action-btn" onclick="window.location.href='my-ideas.html'">
+                        <span class="action-icon">💡</span>
+                        <span class="action-text">Create New Idea</span>
+                    </button>
+                    <button class="quick-action-btn" onclick="window.location.href='my-ideas.html'">
+                        <span class="action-icon">📊</span>
+                        <span class="action-text">View All Ideas</span>
+                    </button>
+                    <button class="quick-action-btn" onclick="window.location.href='project-workspace.html'">
+                        <span class="action-icon">🚀</span>
+                        <span class="action-text">Active Projects</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <script src="app.js"></script>
+    <script src="ui.js"></script>
+<script>
+    // Initialize dashboard after all scripts are loaded
+    function initializeDashboard() {
+        // Ensure Firebase and functions are available
+        if (typeof firebase === 'undefined') {
+            console.error('Firebase not loaded');
+            setTimeout(initializeDashboard, 100);
+            return;
+        }
+        
+        // Wait for app.js functions to exist
+        if (typeof loadAvailableProjects !== 'function' || 
+            typeof loadMyIdeas !== 'function' || 
+            typeof populateDashboardLists !== 'function') {
+            
+            console.log('Waiting for app.js to load...');
+            setTimeout(initializeDashboard, 100);
+            return;
+        }
+        
+        // Check authentication and load data
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                // User is logged in, load ALL dashboard data
+                loadAvailableProjects();   // Loads "Available Projects" grid
+                loadMyIdeas();             // Loads top counter numbers
+                populateDashboardLists();  // <--- NEW: Loads the detailed lists!
+            } else {
+                // User is not logged in, redirect to login
+                alert("Please log in to access the dashboard.");
+                window.location = "login.html";
+            }
+        });
+    }
+    
+    // Start initialization when page loads
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeDashboard);
+    } else {
+        // DOM is already loaded
+        initializeDashboard();
+    }
+</script>
+    <div id="aiAssistantModal" class="modal">
+    <div class="modal-content" style="max-width: 600px;">
+        <span class="close" onclick="document.getElementById('aiAssistantModal').style.display='none'">&times;</span>
+        
+        <div class="ai-header" style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+            <div style="font-size: 2rem;">🤖</div>
+            <div>
+                <h2 style="margin: 0;">AI Project Guide</h2>
+                <p style="margin: 0; color: #666; font-size: 0.9rem;">Personalized for your branch</p>
+            </div>
+        </div>
+
+        <div id="aiResponseContent" style="line-height: 1.6;">
+            </div>
+        
+        <div style="margin-top: 20px; text-align: right;">
+            <button class="btn-primary" onclick="document.getElementById('aiAssistantModal').style.display='none'">Close</button>
+        </div>
+    </div>
+</div>
+<div id="aiChatWidget" class="ai-widget-container">
+    <button id="aiToggleBtn" onclick="toggleChatWindow()">
+        🤖 AI Help
+    </button>
+
+    <div id="aiChatWindow" class="ai-chat-window" style="display: none;">
+        <div class="ai-header">
+            <span>Gemini Student Assistant</span>
+            <span class="close-btn" onclick="toggleChatWindow()">×</span>
+        </div>
+        
+        <div id="aiChatMessages" class="ai-messages">
+            <div class="ai-message-bubble ai-intro">
+                <strong>Gemini:</strong> Hi! I can help you with coding errors, project ideas, or explaining tough concepts. What's on your mind?
+            </div>
+        </div>
+
+        <div class="ai-input-area">
+            <input type="text" id="aiUserInput" placeholder="Ask anything..." onkeypress="checkEnter(event)">
+            <button onclick="sendToGemini()">➤</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+

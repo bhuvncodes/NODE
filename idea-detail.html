@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Idea Details - Student Idea Collaboration</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Sidebar Toggle Button (Fixed Position) -->
+    <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">☰</button>
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="brand">
+                <img src="node.png" alt="NodeLogo" class="node-logo">
+            </div>
+            <h2>NODE</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="nav-item">
+                <span>📊</span> Dashboard
+            </a>
+            <a href="my-ideas.html" class="nav-item">
+                <span>💡</span> My Ideas
+            </a>
+            <a href="project-workspace.html" class="nav-item">
+                <span>🚀</span> Projects
+            </a>
+            <a href="project-progress.html" class="nav-item">
+                <span>📈</span> Progress
+            </a>
+            <a href="profile.html" class="nav-item">
+                <span>👤</span> Profile
+            </a>
+            <a href="index.html" class="nav-item">
+                <span>🚪</span> Logout
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-header">
+            <button class="btn-back" onclick="window.location.href='my-ideas.html'">← Back</button>
+            <h1 id="ideaTitle">Idea Details</h1>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state-card" id="emptyIdeaState">
+            <div class="empty-icon-large">💡</div>
+            <h3>No Idea Selected</h3>
+            <p>Select an idea from your ideas list to view its details.</p>
+            <button class="btn-primary" onclick="window.location.href='my-ideas.html'">View My Ideas</button>
+        </div>
+
+        <!-- Idea Details Card (will be populated by backend) -->
+        <div class="card idea-detail-card" id="ideaDetailCard" style="display: none;">
+            <div class="idea-detail-header">
+                <div class="idea-meta">
+                    <span class="status-badge" id="ideaStatusBadge">-</span>
+                    <span class="idea-date" id="ideaDate">Posted on: -</span>
+                </div>
+            </div>
+
+            <!-- Tags will be populated by backend -->
+            <div class="idea-tags" id="ideaTags">
+                <!-- Tags will be dynamically added here -->
+            </div>
+
+            <div class="idea-description-full" id="ideaDescription">
+                <h3>Description</h3>
+                <p id="descriptionText">
+                    <!-- Description will be populated by backend -->
+                </p>
+            </div>
+
+            <!-- Idea Owner Section (will be populated by backend) -->
+            <div class="idea-owner-section" id="ideaOwnerSection">
+                <h3>Idea Owner</h3>
+                <div class="owner-card" id="ownerCard">
+                    <!-- Owner info will be populated by backend -->
+                </div>
+            </div>
+
+            <!-- Required Roles Section (will be populated by backend) -->
+            <div class="required-roles-section" id="requiredRolesSection">
+                <h3>Required Team Roles</h3>
+                <p class="requirements-subtitle">All roles must be filled before workspace becomes available.</p>
+                <!-- Roles will be populated by backend -->
+                <div class="roles-list" id="rolesList">
+                    <!-- Required roles will be dynamically added here -->
+                </div>
+            </div>
+
+            <!-- Action Button -->
+            <div class="idea-actions-full" id="ideaActions">
+                <button class="btn-primary btn-large" id="joinTeamBtn">Request to Join Team</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="ui.js"></script>
+</body>
+</html>
+

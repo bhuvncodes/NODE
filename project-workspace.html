@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Workspace - Student Idea Collaboration</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Sidebar Toggle Button (Fixed Position) -->
+    <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">☰</button>
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="brand">
+                <img src="node.png" alt="NodeLogo" class="node-logo">
+            </div>
+            <h2>NODE</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="nav-item">
+                <span>📊</span> Dashboard
+            </a>
+            <a href="my-ideas.html" class="nav-item">
+                <span>💡</span> My Ideas
+            </a>
+            <a href="project-workspace.html" class="nav-item active">
+                <span>🚀</span> Projects
+            </a>
+            <a href="profile.html" class="nav-item">
+                <span>👤</span> Profile
+            </a>
+            <a href="index.html" class="nav-item">
+                <span>🚪</span> Logout
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-header">
+            <h1 id="projectTitle">Project Workspace</h1>
+            <p class="subtitle" id="projectSubtitle">Select a project to view workspace</p>
+        </div>
+
+        <!-- My Projects List -->
+        <div class="card">
+            <h2>Ongoing Projects</h2>
+            <div id="myProjectsEmpty" class="empty-state" style="display: none;">
+                <div class="empty-icon">🚀</div>
+                <h3>No Ongoing Projects</h3>
+                <p>Once a project’s team is filled or marked in progress, it will appear here for owners and members.</p>
+            </div>
+            <div id="myProjectsList" class="project-mini-list"></div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state-card" id="emptyWorkspaceState">
+            <div class="empty-icon-large">💬</div>
+            <h3>No Active Project</h3>
+            <p>You don't have any active projects yet. Once an idea's requirements are fulfilled and it becomes a project, the workspace will appear here.</p>
+            <button class="btn-primary" onclick="window.location.href='my-ideas.html'">View My Ideas</button>
+        </div>
+
+        <!-- Project Overview Section (will be populated by backend) -->
+        <div class="card project-overview" id="projectOverviewCard" style="display: none;">
+            <h2>Project Overview</h2>
+            <p id="projectDescription">
+                <!-- Project description will be populated by backend -->
+            </p>
+            <div class="project-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Status:</span>
+                    <span class="status-badge" id="projectStatusBadge">-</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Start Date:</span>
+                    <span id="startDate">-</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Team Size:</span>
+                    <span id="teamSize">-</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Required Roles Checklist (Shown when Open) -->
+        <div class="card required-roles-checklist" id="requiredRolesCard" style="display: none;">
+            <h2>Team Requirements</h2>
+            <p class="requirements-subtitle">All required roles must be filled before workspace becomes available.</p>
+            
+            <!-- Requirements Progress -->
+            <div class="requirements-progress">
+                <div class="progress-header">
+                    <span class="progress-label">Requirements Progress</span>
+                    <span class="progress-count" id="requirementsProgress">- / - roles filled</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill requirements-progress-fill" id="requirementsProgressBar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <p class="progress-message" id="requirementsMessage">Fill all required roles to unlock the workspace.</p>
+                <div class="auto-unlock-notice" id="autoUnlockNotice" style="display: none;">
+                    <div class="notice-icon">⚡</div>
+                    <div class="notice-content">
+                        <strong>Automatic Activation:</strong> Once all requirements are met, the workspace will automatically proceed to "In Progress" status and become fully active.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Roles checklist will be populated by backend -->
+            <div class="roles-checklist" id="rolesChecklist">
+                <!-- Required roles will be dynamically added here -->
+            </div>
+        </div>
+
+        <!-- Locked Workspace Card (Shown when Open) -->
+        <div class="card workspace-locked" id="lockedWorkspace" style="display: none;">
+            <div class="locked-content">
+                <div class="lock-icon">🔒</div>
+                <h2>Workspace Locked</h2>
+                <p class="locked-message">
+                    Workspace will be available once required team members join.
+                </p>
+                <p class="locked-details">
+                    Complete the team requirements above to unlock the project workspace and start collaborating.
+                </p>
+                <div class="unlock-info">
+                    <p><strong>Automatic Workspace Activation:</strong></p>
+                    <p class="unlock-process">When all required team roles are filled, the project workspace will <strong>automatically proceed</strong> and become active.</p>
+                    <ul class="unlock-benefits">
+                        <li>✓ Project workspace will be automatically activated</li>
+                        <li>✓ Status changes from "Open" to "In Progress"</li>
+                        <li>✓ Team members can start collaborating</li>
+                        <li>✓ Task board becomes available</li>
+                        <li>✓ Full project management features unlock</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Team Members Section (Shown when In Progress) -->
+        <div class="card team-section" id="teamSection" style="display: none;">
+            <h2>Team Members</h2>
+            <!-- Team members will be populated by backend -->
+            <div class="team-grid" id="teamGrid">
+                <!-- Team members will be dynamically added here -->
+            </div>
+        </div>
+
+        <!-- Task Board Section (Shown when In Progress) -->
+        <div class="task-board-section" id="taskBoardSection" style="display: none;">
+            <h2>Task Board</h2>
+            <!-- Task board will be populated by backend -->
+            <div class="task-board" id="taskBoard">
+                <!-- To Do Column -->
+                <div class="task-column">
+                    <div class="column-header">
+                        <h3>To Do</h3>
+                        <span class="task-count" id="todoCount">0</span>
+                    </div>
+                    <div class="task-list" id="todoList">
+                        <!-- Tasks will be dynamically added here -->
+                    </div>
+                </div>
+
+                <!-- In Progress Column -->
+                <div class="task-column">
+                    <div class="column-header">
+                        <h3>In Progress</h3>
+                        <span class="task-count" id="inProgressCount">0</span>
+                    </div>
+                    <div class="task-list" id="inProgressList">
+                        <!-- Tasks will be dynamically added here -->
+                    </div>
+                </div>
+
+                <!-- Done Column -->
+                <div class="task-column">
+                    <div class="column-header">
+                        <h3>Done</h3>
+                        <span class="task-count" id="doneCount">0</span>
+                    </div>
+                    <div class="task-list" id="doneList">
+                        <!-- Tasks will be dynamically added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Project Chat -->
+<div id="chatCard" class="floating-project-chat" style="display: none;">
+    <div class="floating-chat-header" id="chatHeader">
+        <div style="display:flex; flex-direction:column;">
+            <h2 id="chatIdeaTitle">Project Chat</h2>
+            <small style="font-size: 10px; opacity: 0.9;">Drag to move • Corner to resize</small>
+        </div>
+        <div class="chat-controls">
+            <button onclick="document.getElementById('chatCard').style.display='none'">_</button>
+            <button onclick="document.getElementById('chatCard').style.display='none'">×</button>
+        </div>
+    </div>
+
+    <div id="chatMessages" class="floating-chat-body">
+        <div class="chat-placeholder">Loading messages...</div>
+    </div>
+
+    <form id="chatForm" class="floating-chat-input" onsubmit="sendChatMessage(event)">
+        <input id="chatInput" type="text" placeholder="Type a message..." autocomplete="off" required />
+        <button type="submit">➤</button>
+    </form>
+</div>
+        <!-- Project Details Modal -->
+        <div id="projectDetailsModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('projectDetailsModal')">&times;</span>
+                <h2 id="projectDetailsTitle">Project Details</h2>
+                <p id="projectDetailsMeta" style="color: #666; margin-bottom: 10px;"></p>
+                <p id="projectDetailsDesc" style="margin-bottom: 16px;"></p>
+                <h3>Team Members</h3>
+                <div id="projectMembersList" class="project-mini-list" style="max-height: 320px; overflow-y: auto;"></div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+    <script src="app.js"></script>
+    <script src="ui.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeWorkspaceChat();
+        });
+    </script>
+    <div id="aiChatWidget" class="ai-widget-container">
+    <button id="aiToggleBtn" onclick="toggleChatWindow()">
+        🤖 NODE AI
+    </button>
+
+    <div id="aiChatWindow" class="ai-chat-window" style="display: none;">
+        <div class="ai-header">
+            <span>NODE AI Assistant</span>
+            <span class="close-btn" onclick="toggleChatWindow()">×</span>
+        </div>
+        
+        <div id="aiChatMessages" class="ai-messages">
+            <div class="ai-message-bubble ai-intro">
+                <strong>NODE AI:</strong> Hi! I can help you with coding errors, project ideas, or explaining tough concepts. What's on your mind?
+            </div>
+        </div>
+
+        <div class="ai-input-area">
+            <input type="text" id="aiUserInput" placeholder="Ask anything..." onkeypress="checkEnter(event)">
+            <button onclick="sendToNodeAI()">➤</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
